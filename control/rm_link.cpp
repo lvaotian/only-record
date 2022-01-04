@@ -10,7 +10,7 @@
  * @brief Construct a new rm vision init::rm vision init object
  *
  */
-RM_Vision_Init::RM_Vision_Init():capture(USB_CAPTURE_DEFULT){
+RM_Vision_Init::RM_Vision_Init():capture(USB_CAPTURE_DEFULT),cap(ISOPEN_INDUSTRY_CAPTURE){
 #if RECORD == 1
         //printf(CONFIG_FILE_PATH);
         String out_path = SAVE_AVI_PATH+to_string(RM_Vision_Init::getFileSizeInOrder(SAVE_AVI_PATH))+".avi";//目标路径
@@ -45,15 +45,15 @@ RM_Vision_Init::~RM_Vision_Init(){
 void RM_Vision_Init::Run(cv::Mat src_img){
 #if RECORD == 1
     //get Image
-    /*if(cap->isindustryimgInput()){
-        src_img = cvarrToMat(cap->iplImage,true);//这里只是进行指针转换，将IplImage转换成Mat类型
-    }else{
-        capture >> src_img;
-    }*/
-    //imshow("src_img",src_img);
+    // if(cap.isindustryimgInput()){
+    //     src_img = cvarrToMat(cap.iplImage,true);//这里只是进行指针转换，将IplImage转换成Mat类型
+    // }else{
+    //     capture >> src_img;
+    // }
+    // imshow("src_img",src_img);
     writer << src_img;
 
-    //cap->cameraReleasebuff();
+    //cap.cameraReleasebuff();
 #endif
 
 }
@@ -130,6 +130,11 @@ void RM_Vision_Init::close(cv::Mat src_img){
     // int fourcc = writer.fourcc('X', 'V', 'I', 'D');   // 设置avi文件对应的编码格式 66 67
     int fourcc = writer.fourcc('M', 'J', 'P', 'G'); // 33 30 48Flv1
     writer.open(out_path,  fourcc, 30, size, true);//CAP_DSHOW = true
+    if (writer.isOpened()) {
+    std::cout << "正在录制" << std::endl;
+  } else {
+    std::cout << "录制失败" << std::endl;
+  }
     writer << src_img;
 }
 int RM_Vision_Init::getFileSizeInOrder(const std::string &path) {
